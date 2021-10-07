@@ -1,0 +1,40 @@
+pipeline {
+  agent any
+    
+ 
+    
+  stages {
+        
+    stage('Git') {
+      steps {
+        git 'https://github.com/Edrson/fase2-SA'
+      }
+    }
+     
+    stage('Build') {
+      steps {
+        sh 'npm install'
+        
+      }
+    }  
+    
+            
+    stage('Test') {
+      steps {
+        sh 'npm run test-d'
+      }
+    }
+    
+    stage('crearDockerImage') {
+      steps {
+        sh 'docker build -t test2 .'
+      }
+    }
+   stage('correrDocker') {
+      steps {
+        sh 'docker run -d -p 3000:3000 test2'
+      }
+    }
+
+  }
+}
