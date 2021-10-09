@@ -32,7 +32,7 @@ pipeline {
     }
    stage('correrDocker') {
       steps {
-        sh 'docker run -d -p 80:80 test5'
+        sh 'docker run -d -p 80:3000 test5'
       }
     }
 
