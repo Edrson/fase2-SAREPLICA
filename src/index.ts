@@ -101,10 +101,34 @@ app.get("/sa/product/proveedor/:iduser", async (req: Request, res: Response, nex
     next(e);
   }
 });
+//*Agregar a lista de favoritos
+app.post("/sa/product/favorito", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await product.FGProductFavorito(req, res);
+  } catch (e) {
+    next(e);
+  }
+});
 //*Registrar compra:
 app.post("/sa/product/regcompra", async (req: Request, res: Response, next: NextFunction) => {
   try {
     await compra.FGRegistraCompra(req, res);
+  } catch (e) {
+    next(e);
+  }
+});
+//Consultar Compra por Cliente
+app.get("/sa/user/compra/:idcliente", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await compra.FGConsultaCompraCliente(req, res);
+  } catch (e) {
+    next(e);
+  }
+});
+//Consultar Compra por Vendedor
+app.get("/sa/user/venta/:idproveedor", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await compra.FGConsultaVenta(req, res);
   } catch (e) {
     next(e);
   }
@@ -129,6 +153,40 @@ app.post("/sa/product/regpuja", async (req: Request, res: Response, next: NextFu
 app.get("/sa/product/con/subastas", async (req: Request, res: Response, next: NextFunction) => {
   try {
     await subasta.FGConsultaSubastas(req, res);
+  } catch (e) {
+    next(e);
+  }
+});
+//* Consultar subasta por id
+app.get("/sa/product/con/subastas/:idsubasta", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await subasta.FGConsultaSubastaID(req, res);
+  } catch (e) {
+    next(e);
+  }
+});
+//* Puja ganadora
+app.get("/sa/subastas/ganadora/:idsubasta", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await subasta.FGPPujaGanadora(req, res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+//* Consultar subasta por proveedor
+app.get("/sa/subastas/proveedor/:idproveedor", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await subasta.FGConsultaSubastaProv(req, res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+//* Consultar favoritos por usuario
+app.get("/sa/producto/favorito/:idusuario", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await product.FGConsultaFavoritosUsuario(req, res);
   } catch (e) {
     next(e);
   }

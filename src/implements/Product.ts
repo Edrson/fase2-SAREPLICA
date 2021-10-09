@@ -5,6 +5,8 @@ const {MongoClient} = require("mongodb");
 //uri de la BD, user, pass en mongodb
 const uri = "mongodb+srv://admin:451432@cluster0.1fct6.mongodb.net/retryWrites=true&w=majority";
 const client = new MongoClient(uri);
+const axios = require('axios')
+var ObjectID = require('mongodb').ObjectId;
 
 class Product {
 
@@ -115,6 +117,7 @@ class Product {
     }
   }
 
+
   //^ Eliminar producto ------------------------------------------------------------
   async FGProductDelete(req: Request, res: Response) {
     try {
@@ -139,6 +142,7 @@ class Product {
       //res.json({ statusCode: res.statusCode, message: error.message });
     }
   }
+
   async FGProductDeleteBD(req: Request): Promise<any> {
     const rg = new resGen();
     try {
@@ -166,9 +170,28 @@ class Product {
     }
   }
 
+
   //^ Catalogo de todos los productos---------------------------------------------------------------------
   async FGCatalogue(req: Request, res: Response) {
     try {
+      //console.log(req.body);
+      //console.log(req.headers.authorization);
+
+      // const headers = { 
+      //    'Authorization': req.headers.authorization
+      // };
+
+      // axios.post('http://localhost:3001/jwt/secure', {}, {headers})
+      //   .then((resp: any) => {
+      //     //console.log(`statusCode: ${resp.status}`)
+      //     console.log(resp.data)
+      //     if (resp.data.name){
+      //       return res.status(401).send({
+      //         error: "Token JWT no válido."
+      //       })    
+      //     }
+      //   });
+
       let rg = new resGen();
       await client.connect();
       rg = await this.FGCatalogueBD(req);
@@ -210,7 +233,7 @@ class Product {
       return rg;
     }
   }
-
+  
 
   //^ Catalogo de productos de un proveedor en específico ---------------------------------------------------------------------
   async FGProductSupplier(req: Request, res: Response) {
@@ -237,13 +260,12 @@ class Product {
       //res.json({ statusCode: res.statusCode, message: error.message });
     }
   }
+  
   async FGProductSupplierBD(user: string): Promise<any> {
     const rg = new resGen();
     try {
       //TODO implementar consulta a la base de datos obtener todos los productos de un proveedor en específico
-      //console.log(user);
       //const cursor = await client.db("SAProject").collection("Categoria").find({ "productos.proveedor": user });
-      //const cursor = await client.db("SAProject").collection("Categoria").find({ "productos.proveedor": user }, { "productos.$": 1 });
       const cursor = await client.db("SAProject").collection("Categoria").aggregate([
         {
           $unwind: "$productos"
@@ -255,12 +277,9 @@ class Product {
           $project: {"producto": "$productos"}
         }
       ])
-      
-      //const cursor = await client.db("SAProject").collection("Categoria").find({ productos: {proveedor: user } });
-      //const cursor = await client.db("SAProject").collection("Categoria").find({_id: "Ropa"});
-      //console.log(cursor);
+
       const result = await cursor.toArray();
-      console.log(result);
+      //console.log(result);
       
       rg.valid = true;
       /*
@@ -293,7 +312,100 @@ class Product {
       return rg;
     }
   }
+
+
+  //^ Favoritos (lista de deseos) ------------------------------------------------------------
+  async FGProductFavorito(req: Request, res: Response) {
+    try {
+      let rg = new resGen();
+      await client.connect();
+      rg = await this.FGProductFavoritoBD(req);
+      if (rg.valid == true) {
+        res.json({
+          statusCode: res.statusCode,
+          message: "OPERATION_SUCCESFULL",
+        });
+      } else {
+        res.statusCode = 500;
+        res.json({
+          statusCode: res.statusCode,
+          message: rg.message,
+        });
+      }
+    } catch (error) {
+      console.log("Error en metodo FGProductFavorito");
+      res.statusCode = 500;
+      //res.json({ statusCode: res.statusCode, message: error.message });
+    }
+  }
+
+  async FGProductFavoritoBD(req: Request): Promise<any> {
+    const rg = new resGen();
+    try {
+      //TODO implementar consumo a la base de datos para eliminar producto
+      console.log(req.body);
+      const result = await client.db("SAProject").collection("Favorito").insertOne(req.body);
+
+      rg.valid = true;
+      rg.data = result;
+      return rg;
+    } catch (error) {
+      rg.valid = false;
+      //rg.message = error.message;
+      return rg;
+    }
+  }
+
+  async FGConsultaFavoritosUsuario(req: Request, res: Response) {
+    try {
+      let rg = new resGen();
+      await client.connect();
+      rg = await this.FGConsultaFavoritosUsuarioBD(req.params.idusuario);
+      if (rg.valid == true) {
+        res.json({
+          statusCode: res.statusCode,
+          message: "OPERATION_SUCCESFULL",
+          data: rg.data,
+        });
+      } else {
+        res.statusCode = 500;
+        res.json({
+          statusCode: res.statusCode,
+          message: rg.message,
+        });
+      }
+    } catch (error) {
+      console.log("Error en metodo FGConsultaSubastaID");
+      res.statusCode = 500;
+      //res.json({ statusCode: res.statusCode, message: error.message });
+    }
+  }
+
+  async FGConsultaFavoritosUsuarioBD(id:string): Promise<any> {
+    const rg = new resGen();
+    try {
+   // const cursor = await client.db("SAProject").collection("Subasta").find();
+    // const result = await cursor.toArray();
   
+  
+      const cursor = await client.db("SAProject").collection("Favorito").find({"usuario":id});
+      const result = await cursor.toArray();
+  
+      
+      rg.valid = true;
+      rg.data = result;
+      //rg.message = `Usuario agregado con el siguiente _id: ${result.insertedId}`;
+    } catch (error) {
+      rg.valid = false;
+      rg.message = (error as Error).message;
+    } finally {
+      return rg;
+    }
+  }
+
 }
+
+  
+
 
 export default Product;

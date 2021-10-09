@@ -27,7 +27,7 @@ const PORT = 3000;
 var cors = require("cors");
 app.use(cors());
 app.use(express.json());
-app.use(morgan_1.default("dev"));
+app.use((0, morgan_1.default)("dev"));
 //^Instanciar los objetos-----------
 const userDB = new UserDB_1.default();
 const user = new UserImp_1.default(userDB);
@@ -114,10 +114,37 @@ app.get("/sa/product/proveedor/:iduser", (req, res, next) => __awaiter(void 0, v
         next(e);
     }
 }));
+//*Agregar a lista de favoritos
+app.post("/sa/product/favorito", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield product.FGProductFavorito(req, res);
+    }
+    catch (e) {
+        next(e);
+    }
+}));
 //*Registrar compra:
 app.post("/sa/product/regcompra", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield compra.FGRegistraCompra(req, res);
+    }
+    catch (e) {
+        next(e);
+    }
+}));
+//Consultar Compra por Cliente
+app.get("/sa/user/compra/:idcliente", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield compra.FGConsultaCompraCliente(req, res);
+    }
+    catch (e) {
+        next(e);
+    }
+}));
+//Consultar Compra por Vendedor
+app.get("/sa/user/venta/:idproveedor", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield compra.FGConsultaVenta(req, res);
     }
     catch (e) {
         next(e);
@@ -145,6 +172,42 @@ app.post("/sa/product/regpuja", (req, res, next) => __awaiter(void 0, void 0, vo
 app.get("/sa/product/con/subastas", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield subasta.FGConsultaSubastas(req, res);
+    }
+    catch (e) {
+        next(e);
+    }
+}));
+//* Consultar subasta por id
+app.get("/sa/product/con/subastas/:idsubasta", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield subasta.FGConsultaSubastaID(req, res);
+    }
+    catch (e) {
+        next(e);
+    }
+}));
+//* Puja ganadora
+app.get("/sa/subastas/ganadora/:idsubasta", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield subasta.FGPPujaGanadora(req, res);
+    }
+    catch (e) {
+        next(e);
+    }
+}));
+//* Consultar subasta por proveedor
+app.get("/sa/subastas/proveedor/:idproveedor", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield subasta.FGConsultaSubastaProv(req, res);
+    }
+    catch (e) {
+        next(e);
+    }
+}));
+//* Consultar favoritos por usuario
+app.get("/sa/producto/favorito/:idusuario", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield product.FGConsultaFavoritosUsuario(req, res);
     }
     catch (e) {
         next(e);

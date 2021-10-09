@@ -15,6 +15,7 @@ const { MongoClient } = require('mongodb');
 //uri de la BD, user, pass en mongodb
 const uri = "mongodb+srv://admin:451432@cluster0.1fct6.mongodb.net/retryWrites=true&w=majority";
 const client = new MongoClient(uri);
+const axios = require('axios');
 class UserLogin {
     //^Verifica las credenciales de un usuario para permitirlo ingresar al sistema
     FGLogin(req, res) {
@@ -27,6 +28,26 @@ class UserLogin {
                     //TODO verificar la respuesta de la base de datos, si las credenciales son correctas o incorrectas, y verificar tipo de usuario
                     //^Si las credenciales son correctas setear variable log en true
                     let log = true;
+                    //se hace post al endpoint del jwt para obtener un token
+                    // axios.post('http://localhost:3001/jwt/login', {
+                    //   username: req.body._id
+                    // })
+                    // .then((resp: any) => {
+                    //   //console.log(`statusCode: ${resp.status}`)
+                    //   console.log(resp.data.token)
+                    //   res.json({
+                    //     statusCode: res.statusCode,
+                    //     message: "OPERATION_SUCCESFULL",
+                    //     login: {
+                    //       correct: log,
+                    //       userType: rg.data.tipo,
+                    //       token: resp.data.token
+                    //     },
+                    //   });
+                    // })
+                    // .catch((error: any) => {
+                    //   console.error(error)
+                    // })
                     res.json({
                         statusCode: res.statusCode,
                         message: "OPERATION_SUCCESFULL",
@@ -43,6 +64,7 @@ class UserLogin {
                         login: {
                             correct: false,
                             userType: null,
+                            token: null
                         },
                     });
                 }
